@@ -19,7 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from netCDF4 import Dataset, stringtochar
+from netCDF4 import Dataset
 
 
 LEN_STRING = 33
@@ -27,8 +27,12 @@ LEN_LINE = 81
 
 
 def _write_name_array(var, names: list[str]) -> None:
-    arr = np.array(names, dtype=f"S{LEN_STRING}")
-    var[:, :] = stringtochar(arr)
+    # Build a (len(names), LEN_STRING) S1 array without using stringtochar,
+    # which is broken in netCDF4 >= 1.7 when paired with numpy >= 2.0.
+    arr = np.array(
+        [list(s.ljust(LEN_STRING)[:LEN_STRING]) for s in names], dtype="S1"
+    )
+    var[:, :] = arr
 
 
 def write_block_exodus(
