@@ -1,0 +1,6 @@
+numpy>=1.23
+netCDF4>=1.6
+
+# Test harness (used by run_tests.py)
+pytest>=7
+pyyaml>=6
